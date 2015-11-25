@@ -1,0 +1,21 @@
+### Catkin generated ###
+catkin/
+catkin_generated/
+cmake/
+CMakeFiles/
+devel/
+gtest/
+test_results/
+.settings/
+*.pyc
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+.pydevproject
+.cproject
+.project
+class_loader_hide_library_symbols__*
+
+### Linux temp ###
+*~

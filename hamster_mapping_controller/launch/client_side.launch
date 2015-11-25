@@ -1,0 +1,22 @@
+<launch>
+	<!--NOTE: launch files should be without the '.launch' extension-->
+    <arg name="mapping_launch_package" default="hamster_launch" />
+    <arg name="mapping_launch_file" default="mapping" />
+
+	<arg name="localization_launch_package" default="hamster_launch" />
+    <arg name="localization_launch_file" default="localization" />
+
+    <arg name="starting_map_mode" default="localization" /> <!--Options: localization , slam-->
+
+    <arg name="output" default="screen" />
+    <arg name="respawn" default="false" />
+
+    <node pkg="mapping_controller" type="client_side" name="mapping_controller_client" output="$(arg output)" respawn="$(arg respawn)">
+    	<param name="mapping_launch_package" value="$(arg mapping_launch_package)" />
+		<param name="mapping_launch_file" value="$(arg mapping_launch_file)" />
+		<param name="localization_launch_package" value="$(arg localization_launch_package)" />
+		<param name="localization_launch_file" value="$(arg localization_launch_file)" />
+		<param name="starting_map_mode" value="$(arg starting_map_mode)" />
+    </node>
+
+</launch>

@@ -1,0 +1,8 @@
+<launch>
+	<env name="ROS_IP" value="132.70.6.46" />
+	<env name="ROS_MASTER_URI" value="http://132.70.6.225:11311" />
+
+	<node name="rqt" pkg="rqt_gui" type="rqt_gui" args="-f -l -s mrm_control_panel/ControlPlugin" />
+
+	<node name="record" pkg="rosbag" type="record" output="screen" args="/tf /agent2/image/compressed /agent6/image/compressed /agent5/image/compressed /mrm_control_panel/detected_objects/show /agent9/image/compressed /mrm/messages /agent8/image/compressed /map /agent/image/compressed /agent1/image/compressed /clock /agent3/image/compressed /mrm_control_panel/malfunctions/hide /mrm/object_request /agent3/cmd_vel /tf_static /mrm_control_panel/malfunctions/show /mrm/robot_state /mrm/restricted_zones /agent4/image/compressed /mrm/navigation/finished /mrm/control_panel/blacklist /mrm/control_panel/focus /agent7/image/compressed /mrm/object_request /mrm/restricted_zones/remove /mrm/control_panel/blacklist /rosout /mrm/goal /mrm/set_robot_state /agent3/cmd_vel /mrm/restricted_zones/add /mrm/control_panel/focus -O mrm_ui" />
+</launch>

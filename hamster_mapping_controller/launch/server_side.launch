@@ -1,0 +1,21 @@
+<launch>
+	<!--NOTE: launch files should be without the '.launch' extension-->
+    <arg name="save_map_launch_package" default="mapping_controller" />
+    <arg name="save_map_launch_file" default="save_map" />
+
+    <!-- NOTE: path to file without extenstion -->
+	<arg name="map_file_path" default="$(find hamster_server_launch)/maps" />
+    <arg name="robot_id" default="agent1" />
+
+    <arg name="output" default="screen" />
+    <arg name="respawn" default="false" />
+
+    <node pkg="mapping_controller" type="server_side" name="mapping_controller_server" output="$(arg output)" respawn="$(arg respawn)">
+    	<param name="save_map_launch_package" value="$(arg save_map_launch_package)" />
+		<param name="save_map_launch_file" value="$(arg save_map_launch_file)" />
+		<param name="map_file_path" value="$(arg map_file_path)" />
+        <param name="robot_position_topic" value="/$(arg robot_id)/slam_out_pose" />
+        <param name="robot_initial_position_topic" value="/$(arg robot_id)/initialpose" />
+    </node>
+
+</launch>

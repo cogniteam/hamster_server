@@ -1,0 +1,217 @@
+{
+  "keys": {}, 
+  "groups": {
+    "pluginmanager": {
+      "keys": {
+        "running-plugins": {
+          "type": "repr", 
+          "repr": "{u'mrm_control_panel/ControlPlugin': [1]}"
+        }
+      }, 
+      "groups": {
+        "plugin__rqt_reconfigure__Param__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget___plugincontainer_top_widget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "u'true'"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }
+              }, 
+              "groups": {}
+            }, 
+            "plugin": {
+              "keys": {
+                "splitter": {
+                  "type": "repr(QByteArray.hex)", 
+                  "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff0000000000000002000000ae0000006401000000060100000001')", 
+                  "pretty-print": "         d     "
+                }, 
+                "_splitter": {
+                  "type": "repr(QByteArray.hex)", 
+                  "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000000000000020000012c0000006401000000090100000002')", 
+                  "pretty-print": "       , d     "
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }, 
+        "plugin__rqt_plot__Plot__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__DataPlotWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "u'true'"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }
+              }, 
+              "groups": {}
+            }, 
+            "plugin": {
+              "keys": {
+                "autoscroll": {
+                  "type": "repr", 
+                  "repr": "u'true'"
+                }, 
+                "plot_type": {
+                  "type": "repr", 
+                  "repr": "u'1'"
+                }, 
+                "topics": {
+                  "type": "repr", 
+                  "repr": "u''"
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }, 
+        "plugin__rqt_runtime_monitor__RuntimeMonitor__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__RuntimeMonitorWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "u'true'"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }, 
+        "plugin__rqt_publisher__Publisher__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__PublisherWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "u'true'"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }
+              }, 
+              "groups": {}
+            }, 
+            "plugin": {
+              "keys": {
+                "publishers": {
+                  "type": "repr", 
+                  "repr": "u\"[{'topic_name': '/navex_lidar/command', 'type_name': 'std_msgs/Float64', 'enabled': False, 'rate': 10.0, 'expressions': {u'/navex_lidar/command/data': 'sin(i/7.0)*1.5707'}, 'publisher_id': 0, 'counter': 0}, {'topic_name': '/Mafat/goal', 'type_name': 'mafat_common/RosGoalMessage', 'enabled': False, 'rate': 1.0, 'expressions': {u'/Mafat/goal/x': '2.4', u'/Mafat/goal/y': '4'}, 'publisher_id': 1, 'counter': 0}]\""
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }, 
+        "plugin__rqt_robot_monitor__RobotMonitor__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__Robot Monitor": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "u'true'"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }
+              }, 
+              "groups": {}
+            }, 
+            "plugin": {
+              "keys": {
+                "splitter": {
+                  "type": "repr(QByteArray.hex)", 
+                  "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000000000000030000006400000064000000c801000000090100000002')", 
+                  "pretty-print": "       d d       "
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }, 
+        "plugin__mrm_control_panel__ControlPlugin__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__MrmControlWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "True"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }, 
+        "plugin__mrm_director_panel__DirectorPanelPlugin__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__MrmDirectorPanelWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "u'true'"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }
+      }
+    }, 
+    "mainwindow": {
+      "keys": {
+        "geometry": {
+          "type": "repr(QByteArray.hex)", 
+          "repr(QByteArray.hex)": "QtCore.QByteArray('01d9d0cb00010000fffffff8000000110000075f0000044900000000000000340000075700000441000000000000')", 
+          "pretty-print": "         _ I   4 W A   "
+        }, 
+        "state": {
+          "type": "repr(QByteArray.hex)", 
+          "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000000fd000000010000000300000758000003dffc0100000002fb00000084006d0072006d005f006400690072006500630074006f0072005f00700061006e0065006c005f005f004400690072006500630074006f007200500061006e0065006c0050006c007500670069006e005f005f0031005f005f004d0072006d004400690072006500630074006f007200500061006e0065006c0057006900640067006500740100000000000003200000000000000000fb0000006a006d0072006d005f0063006f006e00740072006f006c005f00700061006e0065006c005f005f0043006f006e00740072006f006c0050006c007500670069006e005f005f0031005f005f004d0072006d0043006f006e00740072006f006c0057006900640067006500740100000000000007580000075800ffffff000007580000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')", 
+          "pretty-print": "                  mrm_director_panel__DirectorPanelPlugin__1__MrmDirectorPanelWidget          jmrm_control_panel__ControlPlugin__1__MrmControlWidget                            6MinimizedDockWidgetsToolbar        "
+        }
+      }, 
+      "groups": {
+        "toolbar_areas": {
+          "keys": {
+            "MinimizedDockWidgetsToolbar": {
+              "type": "repr", 
+              "repr": "8"
+            }
+          }, 
+          "groups": {}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<package>
+  <name>hamster_server_launch</name>
+  <version>1.0.0</version>
+  <description>The hamster server launch package</description>
+  <maintainer email="igor@cogniteam.com">Igor Makhtes</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

@@ -1,0 +1,6 @@
+<launch>
+	<env name="ROS_IP" value="132.70.6.127" />
+	<env name="ROS_MASTER_URI" value="http://132.70.6.225:11311" />
+
+	<node name="rqt" pkg="rqt_gui" type="rqt_gui" args="-f -l -s mrm_control_panel/ControlPlugin" />
+</launch>

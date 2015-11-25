@@ -1,0 +1,19 @@
+<launch>
+    <arg name="server_ip" default="10.0.2.152" />
+    
+    <env name="ROS_IP" value="$(arg server_ip)" />
+    <env name="ROS_MASTER_URI" value="http://$(arg server_ip):11311" />
+    
+    <param name="/mrm/robots_count" value="2" />
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find hamster_server_launch)/maps/indoor.yaml" /> 
+
+    <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find hamster_server_launch)/rqt/hamster.perspective" /> 
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hamster_server_launch)/rviz/hamsters.rviz"/> 
+
+    <include file="$(find mapping_controller)/launch/server_side.launch">
+        <arg name="map_file_path" value="$(find hamster_server_launch)/maps/" />
+    </include>
+
+</launch>

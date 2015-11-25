@@ -1,0 +1,9 @@
+<launch>
+    <arg name="map_path" default="/home/pi" />
+    <arg name="output" default="screen" />
+    <arg name="respawn" default="false" />
+
+    <node pkg="map_server" type="map_saver" name="map_saver" output="$(arg output)" respawn="$(arg respawn)" args="-f $(arg map_path)">
+    </node>
+
+</launch>
