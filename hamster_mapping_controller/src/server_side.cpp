@@ -15,6 +15,7 @@ using namespace std;
 #define MAP_SAVER_COMMAND_TOPIC "/map_saver_command"
 #define MAP_SERVER_KILL_COMMAND_TOPIC "/map_server_kill_command"
 #define MAP_SERVER_RUN_COMMAND_TOPIC "/map_server_run_command"
+#define MAP_OUTDOOR_SERVER_RUN_COMMAND_TOPIC "/map_server_outdoor_run_command"
 
 //params
 string map_file_path, save_map_launch_package, save_map_launch_file;
@@ -22,7 +23,7 @@ string robot_position_topic; //the position estimation topic
 string robot_initial_position_topic;
 //commands
 string saveMapCommand;
-string killMapServerCommand, startMapServerInBackgroundCommand;
+string killMapServerCommand, startMapServerInBackgroundCommand, startMapOutdoorServerInBackgroundCommand;
 
 //data
 geometry_msgs::Pose lastPose;
@@ -43,9 +44,15 @@ void startMapServer() {
 	system(startMapServerInBackgroundCommand.c_str());
 }
 
+void startMapOutdoorServer() {
+	//The process should be "short", so don't run on another thread.
+	ROS_INFO("restarting map outdoor server in background");
+	system(startMapOutdoorServerInBackgroundCommand.c_str());
+}
+
 void publishPositionFromFile(){
 	ROS_INFO("reading position file before publishing");
-	string filename = map_file_path + ".pstn";
+	string filename = map_file_path + "/indoor.pstn";
 	ifstream positionFile;
 	positionFile.open(filename.c_str());
 
@@ -102,7 +109,7 @@ void renameCurrentFiles() {
 	std::stringstream fmtPgm;
 	string currentTime = currentDateTime();
 	//move pgm file
-	fmtPgm << "mv " << map_file_path << ".pgm " << map_file_path << "_" << currentTime << ".backup.pgm";
+	fmtPgm << "mv " << map_file_path << "/indoor.pgm " << map_file_path << "/indoor_" << currentTime << ".backup.pgm";
 	string renamePgmCommand = fmtPgm.str();
 	ROS_INFO("running pgm renaming process process");
 	int i = system(renamePgmCommand.c_str());
@@ -110,14 +117,14 @@ void renameCurrentFiles() {
 
 	//move yaml file
 	std::stringstream fmtYaml;
-	fmtYaml << "mv " << map_file_path << ".yaml " << map_file_path << "_" << currentTime << ".backup.yaml";
+	fmtYaml << "mv " << map_file_path << "/indoor.yaml " << map_file_path << "/indoor_" << currentTime << ".backup.yaml";
 	string renameYamlCommand = fmtYaml.str();
 	ROS_INFO("running yaml renaming process process");
 	i = system(renameYamlCommand.c_str());
 	ROS_INFO("renaming yaml process finished with code : %d",i);
 
 	//rename location file.
-	string renamePosCommand ="mv " + map_file_path + ".pstn " + map_file_path + "_" + currentTime + ".backup.pstn";
+	string renamePosCommand ="mv " + map_file_path + "/indoor.pstn " + map_file_path + "/indoor_" + currentTime + ".backup.pstn";
 	ROS_INFO("running pstn renaming process process");
 	i = system(renamePosCommand.c_str());
 	ROS_INFO("renaming pstn process finished with code : %d",i);
@@ -128,7 +135,7 @@ void renameCurrentFiles() {
  */
 void saveCurrentPositionFile(){
 	//open
-	string filename = map_file_path + ".pstn";
+	string filename = map_file_path + "indoor.pstn";
 	ofstream positionFile;
 	positionFile.open(filename.c_str());
 
@@ -155,6 +162,12 @@ bool onMapServerKillRequest(std_srvs::EmptyRequest& request, std_srvs::EmptyResp
 	return true;
 }
 
+bool onMapOutdoorServerRunRequest(std_srvs::EmptyRequest& request, std_srvs::EmptyResponse& response) {
+	startMapOutdoorServer();
+	publishPositionFromFile();
+	return true;
+}
+
 bool onMapServerRunRequest(std_srvs::EmptyRequest& request, std_srvs::EmptyResponse& response) {
 	startMapServer();
 	publishPositionFromFile();
@@ -175,11 +188,12 @@ void readParameters(ros::NodeHandle pnh){
 
 void constructCommands(){
 	std::stringstream fmt;
-	fmt << "roslaunch " << save_map_launch_package << " " << save_map_launch_file << ".launch map_path:=" << map_file_path;
+	fmt << "roslaunch " << save_map_launch_package << " " << save_map_launch_file << ".launch map_path:=" << map_file_path << "/indoor";
 	saveMapCommand = fmt.str();
 
 	killMapServerCommand = "rosnode kill /map_server";
-	startMapServerInBackgroundCommand = "rosrun map_server map_server " + map_file_path + ".yaml __name:=map_server &";
+	startMapServerInBackgroundCommand = "rosrun map_server map_server " + map_file_path + "/indoor.yaml __name:=map_server &";
+	startMapOutdoorServerInBackgroundCommand = "rosrun map_server map_server " + map_file_path + "/outdoor.yaml __name:=map_server &";
 }
 
 int main(int a, char** aa) {
@@ -193,6 +207,7 @@ int main(int a, char** aa) {
 	ros::ServiceServer mapSavingService = nh.advertiseService(MAP_SAVER_COMMAND_TOPIC, onMappingSaveRequest);
 	ros::ServiceServer mapServerKillService = nh.advertiseService(MAP_SERVER_KILL_COMMAND_TOPIC, onMapServerKillRequest);
 	ros::ServiceServer mapServerRunService = nh.advertiseService(MAP_SERVER_RUN_COMMAND_TOPIC, onMapServerRunRequest);
+	ros::ServiceServer mapOutdoorServerRunService = nh.advertiseService(MAP_OUTDOOR_SERVER_RUN_COMMAND_TOPIC, onMapOutdoorServerRunRequest);
 
 	ros::Subscriber robotPositionSubsriber = nh.subscribe(robot_position_topic, 10, onRobotPosition);
 	initialPositionPublisher = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(robot_initial_position_topic, 10 ,true);

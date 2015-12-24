@@ -11,29 +11,38 @@ using namespace std;
 #define MAPPING_COMMAND_TOPIC "/mapping_command"
 #define MODE_COMMAND_SLAM "slam"
 #define MODE_COMMAND_LOCALIZATION "localization"
+#define MODE_COMMAND_OUTDOOR_MODE "outdoor"
 
 #define MAP_SAVER_COMMAND_TOPIC "/map_saver_command"
 #define MAP_SERVER_KILL_COMMAND_TOPIC "/map_server_kill_command"
 #define MAP_SERVER_RUN_COMMAND_TOPIC "/map_server_run_command"
+#define MAP_OUTDOOR_SERVER_RUN_COMMAND_TOPIC "/map_server_outdoor_run_command"
 
 string mapping_launch_package, mapping_launch_file;
 string localization_launch_package, localization_launch_file;
+string outdoor_mode_launch_package, outdoor_mode_launch_file;
 string starting_map_mode;
 
 string mappingLaunchCommand, killMappingLaunchCommand;
 string localizationLaunchCommand, killLocalizationLaunchCommand;
+string outdoorModeLaunchCommand, killOutdoorModeLaunchCommand;
+
+bool enable_mapping = true;
+
+void finishProcess();
 
 enum MODE{
-	NONE, SLAM, LOCALIZATION, WAITING
+	NONE, SLAM, LOCALIZATION, OUTDOOR, WAITING
 };
 
 std::string str(MODE mode){
 	switch(mode){
-	case NONE: return "None";
-	case SLAM: return "SLAM";
-	case LOCALIZATION: return "Localization";
-	case WAITING: return "Waiting";
-	default: return "Unknown";
+		case NONE: return "None";
+		case SLAM: return "SLAM";
+		case LOCALIZATION: return "Localization";
+		case OUTDOOR: return "Outdoor";
+		case WAITING: return "Waiting";
+		default: return "Unknown";
 	}
 }
 
@@ -43,6 +52,7 @@ ros::Subscriber mappingCommandSubscriber;
 ros::ServiceClient mapSaveCommandPublisher;
 ros::ServiceClient mapServerKillCommandPublisher;
 ros::ServiceClient mapServerRunCommandPublisher;
+ros::ServiceClient mapServerOutdoorRunCommandPublisher;
 
 boost::thread mappingProcessThread;
 
@@ -84,6 +94,24 @@ void killLocalization() {
 }
 
 /**
+ * Launches the process for outdoor mode.
+ */
+void launchOutdoorMode() {
+	mode = OUTDOOR;
+	int i = system(outdoorModeLaunchCommand.c_str());
+	cout << "outdoor mode process finished with code : " << i << endl;
+}
+
+/**
+ * Kills the outdoor mode process.
+ */
+void killOutdoorMode() {
+	mode = WAITING;
+	cout << "about to kill outdoor " << endl;
+	system(killOutdoorModeLaunchCommand.c_str());
+}
+
+/**
  * Publishes the command to save the current map (from hector), on the server.
  */
 void saveMap(){
@@ -115,49 +143,101 @@ void runMapServer(){
 	}
 }
 
+void runMapOutdoorServer(){
+	std_srvs::Empty srv;
+	cout << "about to run outdoor map server. "<< endl;
+	if(mapServerOutdoorRunCommandPublisher.call(srv)){
+		cout << "SUCCESSFUL outdoor map server run response got from server. "<< endl;
+	} else {
+		cout << "UNSUCCESSFUL outdoor map server run response got from server. "<< endl;
+	}
+}
+
 void startMapping() {
 	if (mode==SLAM or mode == WAITING) return;
 	if (mode==LOCALIZATION){
-		killLocalization();
-		killMapServer();
+		if (enable_mapping)
+			killMapServer();
 	}
 
-	if(mode != NONE) mappingProcessThread.join();
+	finishProcess();
 	mappingProcessThread = boost::thread(launchMapping);
 }
 
+/**
+ * Saves the map, kills mapping, and runs the map saver back again.
+ */
+void stopMappingCleanly(){
+	if (enable_mapping)
+	{
+		ROS_INFO("Stopping mapping cleanly...");
+		saveMap();
+		runMapServer();
+		ROS_INFO("Mapping has been cleanly stopped");
+	}
+}
 void startLocalization() {
 	if (mode == LOCALIZATION or mode == WAITING) return;
-	if (mode == SLAM){
-		saveMap();
-		killMapping();
-		runMapServer();
+	if (mode == SLAM)
+	{
+		stopMappingCleanly();
 	}
 
-	if(mode != NONE) mappingProcessThread.join();
+	finishProcess();
 	mappingProcessThread = boost::thread(launchLocalization);
+}
+
+void startOutdoorMode() {
+	if (mode == OUTDOOR or mode == WAITING) return;
+	if (mode == SLAM)
+	{
+		stopMappingCleanly();
+	}
+
+	if (enable_mapping) {
+		killMapServer();
+		runMapOutdoorServer();
+	}
+
+	finishProcess();
+	mappingProcessThread = boost::thread(launchOutdoorMode);
 }
 
 //callback
 void onMappingSavingCommand(const std_msgs::String::ConstPtr& msg) {
-	if (msg->data == MODE_COMMAND_SLAM) {
+	if (msg->data == MODE_COMMAND_SLAM)
+	{
 		startMapping();
 	}
 
-	if (msg->data == MODE_COMMAND_LOCALIZATION) {
+	if (msg->data == MODE_COMMAND_LOCALIZATION)
+	{
 		startLocalization();
 	}
+
+	if (msg->data == MODE_COMMAND_OUTDOOR_MODE)
+	{
+		startOutdoorMode();
+	}
+
 }
 
 
 void finishProcess() {
-	while (mode == WAITING)
+	while (mode == WAITING) {
 		boost::this_thread::sleep(boost::posix_time::seconds(1));
-	if (mode == LOCALIZATION)
-		killLocalization();
+	}
+
+	ROS_INFO("Finished");
 
 	if (mode == SLAM)
 		killMapping();
+
+	if (mode == LOCALIZATION)
+		killLocalization();
+
+	if (mode == OUTDOOR)
+		killOutdoorMode();
 
 	mappingProcessThread.join();
 }
@@ -165,9 +245,16 @@ void finishProcess() {
 void readParameters(ros::NodeHandle pnh){
 	pnh.getParam("mapping_launch_package", mapping_launch_package);
 	pnh.getParam("mapping_launch_file", mapping_launch_file);
+
 	pnh.getParam("localization_launch_package", localization_launch_package);
 	pnh.getParam("localization_launch_file", localization_launch_file);
+
+	pnh.getParam("outdoor_mode_launch_package", outdoor_mode_launch_package);
+	pnh.getParam("outdoor_mode_launch_file", outdoor_mode_launch_file);
+
 	pnh.getParam("starting_map_mode", starting_map_mode);
+
+	pnh.param("enable_mapping", enable_mapping, true);
 }
 
 void constructCommands(){
@@ -189,16 +276,31 @@ void constructCommands(){
 	std::stringstream fmt_killLocalizationLaunchCommand;
 	fmt_killLocalizationLaunchCommand << kill_command << localization_launch_file<<"'";
 	killLocalizationLaunchCommand = fmt_killLocalizationLaunchCommand.str();
+
+	std::stringstream fmt_outdoorLaunchCommand;
+	fmt_outdoorLaunchCommand << launch_command << outdoor_mode_launch_package << " " << outdoor_mode_launch_file << ".launch";
+	outdoorModeLaunchCommand = fmt_outdoorLaunchCommand.str();
+
+	std::stringstream fmt_killOutdoorModeLaunchCommand;
+	fmt_killOutdoorModeLaunchCommand << kill_command << outdoor_mode_launch_file << "'";
+	killOutdoorModeLaunchCommand = fmt_killOutdoorModeLaunchCommand.str();
 }
 
 void handleStartingMode() {
-	if (starting_map_mode == "slam") {
+	if (starting_map_mode == "slam")
+	{
 		startMapping();
 		mode = SLAM;
 	}
-	if (starting_map_mode == "localization") {
+	if (starting_map_mode == "localization")
+	{
 		startLocalization();
 		mode = LOCALIZATION;
+	}
+	if (starting_map_mode == "outdoor")
+	{
+		startOutdoorMode();
+		mode = OUTDOOR;
 	}
 }
 
@@ -215,6 +317,7 @@ int main(int a, char** aa) {
 	mapSaveCommandPublisher = nh.serviceClient<std_srvs::Empty>(MAP_SAVER_COMMAND_TOPIC);
 	mapServerKillCommandPublisher= nh.serviceClient<std_srvs::Empty>(MAP_SERVER_KILL_COMMAND_TOPIC);
 	mapServerRunCommandPublisher= nh.serviceClient<std_srvs::Empty>(MAP_SERVER_RUN_COMMAND_TOPIC);
+	mapServerOutdoorRunCommandPublisher= nh.serviceClient<std_srvs::Empty>(MAP_OUTDOOR_SERVER_RUN_COMMAND_TOPIC);
 
 
 	ros::spin();

@@ -1,5 +1,5 @@
 <launch>
-    <arg name="map_path" default="/home/pi" />
+    <arg name="map_path" default="$(find hamster_server_launch)/maps/cogniteam" />
     <arg name="output" default="screen" />
     <arg name="respawn" default="false" />
 
