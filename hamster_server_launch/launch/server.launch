@@ -1,10 +1,4 @@
 <launch>
-    <arg name="server_ip" default="10.0.2.152" />
-    
-    <env name="ROS_IP" value="$(arg server_ip)" />
-    <env name="ROS_MASTER_URI" value="http://$(arg server_ip):11311" />
-    
-    <param name="/mrm/robots_count" value="2" />
 
     <node name="map_server" pkg="map_server" type="map_server" args="$(find hamster_server_launch)/maps/indoor.yaml" /> 
 
