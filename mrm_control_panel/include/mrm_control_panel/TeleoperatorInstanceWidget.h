@@ -104,6 +104,15 @@ private:
     volatile bool closed_;
 
     ros::Publisher operation_publisher_;
+
+    ros::Timer velocity_publisher_timer_;
+
+    ackermann_msgs::AckermannDriveStamped ackermann_msg_;
+
+private:
+
+    void velocityPublishTimerCallback(const ros::TimerEvent& timer);
+
 };
 
 }

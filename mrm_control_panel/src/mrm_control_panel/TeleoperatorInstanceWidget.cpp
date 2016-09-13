@@ -29,6 +29,10 @@ TeleoperatorInstanceWidget::TeleoperatorInstanceWidget(ros::NodeHandle& node_han
         connect(velocity_widget_, SIGNAL(pressedSignal(void)), this, SLOT(speedControlPressed(void)));
 
         initJoystick(input);
+
+        velocity_publisher_timer_ = node_handle_.createTimer(
+        		ros::Duration(0.1),
+				boost::bind(&TeleoperatorInstanceWidget::velocityPublishTimerCallback, this, _1));
 }
 
 TeleoperatorInstanceWidget::~TeleoperatorInstanceWidget() {
@@ -58,7 +62,7 @@ void TeleoperatorInstanceWidget::initJoystick(InputMethod method) {
 }
 
 void TeleoperatorInstanceWidget::initTopics(InputMethod method, string feedbackTopicName, string velocityTopic, string ackermann_topic) {
-	publisher_ = node_handle_.advertise<geometry_msgs::Twist>(velocityTopic, 1, false);
+//	publisher_ = node_handle_.advertise<geometry_msgs::Twist>(velocityTopic, 1, false);
 	ackermannPublisher_ = node_handle_.advertise<ackermann_msgs::AckermannDriveStamped>(ackermann_topic, 1, false);
 	initOperationTopic();
 }
@@ -70,15 +74,15 @@ void TeleoperatorInstanceWidget::uiJoystickCallback(double linearPercent, double
 	if (closed_)
 		return;
 
-	if (!publisher_ || !ackermannPublisher_) 
+	if (!ackermannPublisher_)
 	{
 		ROS_WARN("TeleoperatorInstanceWidget::uiJoystickCallback publisher is not ready");
 		return;
 	}
 
-	if ((ros::Time::now() - last_ui_joystick_publish_) < ros::Duration(0.1) &&
-			(linearPercent != 0 || angularPercent != 0))
-		return;
+//	if ((ros::Time::now() - last_ui_joystick_publish_) < ros::Duration(0.1) &&
+//			(linearPercent != 0 || angularPercent != 0))
+//		return;
 
 	geometry_msgs::Twist cmdVel;
 
@@ -87,14 +91,16 @@ void TeleoperatorInstanceWidget::uiJoystickCallback(double linearPercent, double
 
 	cmdVel.linear.x = linearPercent / 50;
 	cmdVel.angular.z = angularPercent / 200;
-	publisher_.publish(cmdVel);
+//	publisher_.publish(cmdVel);
 
 	ackermann_msgs::AckermannDriveStamped ackermannMsg;
 
 	ackermannMsg.drive.speed = cmdVel.linear.x;
 	ackermannMsg.drive.steering_angle = cmdVel.angular.z;
 
-	ackermannPublisher_.publish(ackermannMsg);
+//	ackermannPublisher_.publish(ackermannMsg);
+
+	ackermann_msg_ = ackermannMsg;
 
 	last_ui_joystick_publish_ = ros::Time::now();
 }
@@ -115,6 +121,22 @@ void TeleoperatorInstanceWidget::keyReleaseEvent(QKeyEvent *event)
 	if (keyReleased)
 	{
 		keyReleased(event);
+	}
+}
+
+void TeleoperatorInstanceWidget::velocityPublishTimerCallback(const ros::TimerEvent& timer) {
+	static int zeroCount = 1;
+
+	if (ackermann_msg_.drive.speed == 0 &&
+			ackermann_msg_.drive.steering_angle == 0) {
+		zeroCount++;
+	} else {
+		zeroCount = 0;
+	}
+
+	if (zeroCount < 2) {
+		ackermannPublisher_.publish(ackermann_msg_);
+	} else {
 	}
 }
 
