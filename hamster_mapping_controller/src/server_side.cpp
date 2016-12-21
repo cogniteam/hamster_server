@@ -10,6 +10,7 @@
 #include <fstream>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <tf/transform_listener.h>
 
 using namespace std;
 #define MAP_SAVER_COMMAND_TOPIC "/map_saver_command"
@@ -28,6 +29,9 @@ string killMapServerCommand, startMapServerInBackgroundCommand, startMapOutdoorS
 //data
 geometry_msgs::Pose lastPose;
 ros::Publisher initialPositionPublisher;
+
+tf::TransformListener* tfListener;
+
 /**
  * Runs the process that saves the map after the mapping is done.
  */
@@ -61,18 +65,26 @@ void publishPositionFromFile(){
 		return;
 	}
 
-	geometry_msgs::Pose position;
-	positionFile>>position.position.x;
-	positionFile>>position.position.y;
-	positionFile>>position.orientation.w;
-	positionFile>>position.orientation.x;
-	positionFile>>position.orientation.y;
-	positionFile>>position.orientation.z;
+	// geometry_msgs::Pose position;
+	// positionFile>>position.position.x;
+	// positionFile>>position.position.y;
+	// positionFile>>position.orientation.w;
+	// positionFile>>position.orientation.x;
+	// positionFile>>position.orientation.y;
+	// positionFile>>position.orientation.z;
 
+	geometry_msgs::Pose position;
+	position.position.x = 0;
+	position.position.y = 0;
+	position.orientation.w = 1;
+	position.orientation.x = 0;
+	position.orientation.y = 0;
+	position.orientation.z = 0;
 
 
 	geometry_msgs::PoseWithCovarianceStamped msg;
 	msg.pose.pose = position;
+	msg.header.frame_id = "map";
 	double cov[] = {0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.06853891945200942};
 	for(int i=0; i<msg.pose.covariance.size(); ++i)
 		msg.pose.covariance.at(i) = cov[i];
@@ -146,6 +158,7 @@ void saveCurrentPositionFile(){
 					lastPose.orientation.x << " " <<
 					lastPose.orientation.y << " " <<
 					lastPose.orientation.z << "\n";
+
 	positionFile.close();
 }
 
@@ -174,15 +187,15 @@ bool onMapServerRunRequest(std_srvs::EmptyRequest& request, std_srvs::EmptyRespo
 	return true;
 }
 
-void onRobotPosition(const geometry_msgs::PoseStamped::ConstPtr& msg){
-	lastPose = msg->pose;
+void onRobotPosition(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg){
+	lastPose = msg->pose.pose;
 }
 
 void readParameters(ros::NodeHandle pnh){
 	pnh.param("save_map_launch_package", save_map_launch_package , string("mapping_controller"));
 	pnh.param("save_map_launch_file", save_map_launch_file , string("save_map"));
 	pnh.param("map_file_path", map_file_path , string("/home/pi"));
-	pnh.param("robot_position_topic", robot_position_topic, string("/agent1/slam_out_pose"));
+	pnh.param("robot_position_topic", robot_position_topic, string("/agent1/amcl_pose"));
 	pnh.param("robot_initial_position_topic", robot_initial_position_topic, string("/agent1/initialpose"));
 }
 
