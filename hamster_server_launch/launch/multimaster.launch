@@ -1,0 +1,6 @@
+<launch>
+    <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find hamster_server_launch)/rqt/hamster.perspective" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hamster_server_launch)/rviz/hamsters.rviz"/>
+    <node name="server_master_discovery_fkie" pkg="master_discovery_fkie" type="master_discovery" />
+    <node name="server_master_sync_fkie" pkg="master_sync_fkie" type="master_sync" />
+</launch>
