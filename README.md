@@ -1,5 +1,6 @@
 # hamster_server
 
+# Single-master configuration
 # Prerequisites
 map_server: 
 
@@ -34,3 +35,5 @@ Once the server is launched, turn the hamster on and it should automatically con
 *Make sure that the router is configured to hamster_net and that your IP is 10.0.2.152
 
 ```
+# multi-master configuration
+editing
