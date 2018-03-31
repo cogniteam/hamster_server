@@ -24,6 +24,8 @@
 #include <qgraphicsscene.h>
 #include <qgraphicsitem.h>
 
+#include <QTransform>
+
 #include <mrm_control_panel/Parameters.h>
 
 #define TRIANGLE_STYLE_NORMAL 120, 120, 120

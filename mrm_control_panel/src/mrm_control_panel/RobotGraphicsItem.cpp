@@ -10,7 +10,7 @@
 namespace mrm_control_panel {
 
 RobotGraphicsItem::RobotGraphicsItem(const std::string& id, QPointF position, QGraphicsItem* parent, QGraphicsScene* scene)
-	: QGraphicsItemGroup(parent, scene)
+	: QGraphicsItemGroup(parent)
 	, id_(id)
 	, marker_(NULL)
 	, marker_size_(0.5)
@@ -172,8 +172,8 @@ void RobotGraphicsItem::selected() {
 
 void RobotGraphicsItem::setPosition(QPointF position) {
 	removePosition();
-	translate(position.x(), position.y());
-	scale(1, -1);
+	setTransform(QTransform::fromTranslate(position.x(), position.y()), true);
+	setTransform(QTransform::fromScale(1, -1), true);
 }
 
 void RobotGraphicsItem::setRotation(double angle) {
@@ -231,7 +231,7 @@ void RobotGraphicsItem::updateOperationMode(const std::string& mode) {
  * RobotGraphicsMarker
  */
 RobotGraphicsMarker::RobotGraphicsMarker(double size, QGraphicsItem* parent, QGraphicsScene* scene)
-	: QGraphicsPolygonItem( parent, scene) {
+	: QGraphicsPolygonItem( parent) {
 	QPolygonF polygon;
 
 	polygon << QPointF(0.15+size * 0.5, 0);
@@ -254,9 +254,9 @@ void RobotGraphicsMarker::mousePressEvent(QGraphicsSceneMouseEvent* event) {
  * RobotGraphicsLabel
  */
 RobotGraphicsLabel::RobotGraphicsLabel(QGraphicsItem* parent, QGraphicsScene* scene)
-	: QGraphicsTextItem(parent, scene) {
+	: QGraphicsTextItem(parent) {
 	float resolution = Parameters::getInstance()->mapResolution();
-	scale(resolution, resolution);
+	setTransform(QTransform::fromScale(resolution, resolution), true);
 }
 
 RobotGraphicsLabel::~RobotGraphicsLabel() {
@@ -265,7 +265,7 @@ RobotGraphicsLabel::~RobotGraphicsLabel() {
 void RobotGraphicsLabel::align() {
 	QRectF bounding_box = boundingRect();
 
-	translate(-bounding_box.center().x(), -bounding_box.center().y());
+	setTransform(QTransform::fromTranslate(-bounding_box.center().x(), -bounding_box.center().y()), true);
 	// translate(-bounding_box.center().x(), -bounding_box.center().y() + bounding_box.height());
 }
 

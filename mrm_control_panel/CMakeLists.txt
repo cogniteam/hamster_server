@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(mrm_control_panel)
 
 MACRO (QT4_WRAP_UI2 outfiles )
-  QT4_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
+  QT5_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
 
   FOREACH (it ${ui_files})
     GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
@@ -25,11 +25,17 @@ find_package(catkin REQUIRED COMPONENTS
     tf 
     image_transport
     ackermann_msgs)
-find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+  find_package(Qt5Widgets REQUIRED)
+else()
+  find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+  include(${QT_USE_FILE})
+endif()
+
 find_package(Boost COMPONENTS system thread REQUIRED)
 find_package(cv_bridge REQUIRED)
-
-include(${QT_USE_FILE})
+find_package(OpenCV REQUIRED)
 
 set(mrm_control_panel_SRCS
     src/mrm_control_panel/ControlPlugin.cpp
@@ -88,9 +94,22 @@ file(GLOB QT_RESOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/*.qrc)
 
 catkin_python_setup()
 
-QT4_ADD_RESOURCES(QT_RESOURCES_CPP ${QT_RESOURCES})
-QT4_WRAP_CPP(mrm_control_panel_MOCS ${mrm_control_panel_HDRS})
-QT4_WRAP_UI(mrm_control_panel_UIS_H ${mrm_control_panel_UIS})
+QT5_ADD_RESOURCES(QT_RESOURCES_CPP ${QT_RESOURCES})
+# QT5_WRAP_CPP(mrm_control_panel_MOCS ${mrm_control_panel_HDRS})
+
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+  QT5_WRAP_CPP(mrm_control_panel_MOCS ${mrm_control_panel_HDRS})
+else()
+  QT4_WRAP_CPP(mrm_control_panel_MOCS ${mrm_control_panel_HDRS})
+endif()
+
+# QT5_WRAP_UI(mrm_control_panel_UIS_H ${mrm_control_panel_UIS})
+
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+    QT5_WRAP_UI(mrm_control_panel_UIS_H ${mrm_control_panel_UIS})
+else()
+    QT4_WRAP_UI(mrm_control_panel_UIS_H ${mrm_control_panel_UIS})
+endif()
 
 include_directories(${mrm_control_panel_INCLUDE_DIRECTORIES} 
     ${catkin_INCLUDE_DIRS}
@@ -104,7 +123,14 @@ add_library(clipper
 target_link_libraries(clipper
     ${catkin_LIBRARIES} 
     ${Boost_LIBRARIES} 
+    ${OpenCV_LIBRARIES}
 )
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+  target_link_libraries(clipper Qt5::Widgets)
+else()
+  target_link_libraries(clipper ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+endif()
+
 
 add_library(${PROJECT_NAME} 
     ${mrm_control_panel_SRCS} 
@@ -118,8 +144,15 @@ target_link_libraries(${PROJECT_NAME}
     ${QT_QTCORE_LIBRARY} 
     ${QT_QTGUI_LIBRARY}
     ${Boost_LIBRARIES} 
+    ${OpenCV_LIBRARIES}
     clipper
 )
+
+if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
+  target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
+else()
+  target_link_libraries(${PROJECT_NAME} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+endif()
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})

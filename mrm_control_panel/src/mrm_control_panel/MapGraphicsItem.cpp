@@ -14,15 +14,15 @@ MapGraphicsItem::MapGraphicsItem(const QPixmap &pixmap,
 								 const QPointF& origin,
 								 QGraphicsItem* parent,
 								 QGraphicsScene *scene)
-	: QGraphicsPixmapItem(pixmap, parent, scene) {
+	: QGraphicsPixmapItem(pixmap, parent) {
 	float resolution = Parameters::getInstance()->mapResolution();
 
 	// ROS_ERROR("origin.x() = %f, origin.y() = %f",origin.x(), origin.y());
-	translate(origin.x(), origin.y());
-	scale(resolution, resolution);
+	setTransform(QTransform::fromTranslate(origin.x(), origin.y()), true);
+	setTransform(QTransform::fromScale(resolution, resolution), true);
 	// ROS_ERROR("resolution = %f",resolution);
-	scale(-1, 1);
-	rotate(90);
+	setTransform(QTransform::fromScale(-1,1), true);
+	setTransform(QTransform().rotate(90), true);
 }
 
 MapGraphicsItem::~MapGraphicsItem() {

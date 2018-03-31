@@ -39,7 +39,8 @@
 #include <std_msgs/String.h>
 #include <ackermann_msgs/AckermannDriveStamped.h>
 
-#include <QtGui/QDockWidget>
+// #include <QtGui/QDockWidget>
+#include <QDockWidget>
 
 #include <geometry_msgs/Twist.h>
 #include <mrm_control_panel/VelocityWidget.h>
