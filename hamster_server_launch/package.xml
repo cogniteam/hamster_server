@@ -6,4 +6,12 @@
   <maintainer email="igor@cogniteam.com">Igor Makhtes</maintainer>
   <license>TODO</license>
   <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>master_discovery_fkie</build_depend>
+  <build_depend>master_sync_fkie</build_depend>
+  <build_depend>map_server</build_depend>
+  
+  <run_depend>master_discovery_fkie</run_depend>
+  <run_depend>master_sync_fkie</run_depend>
+  <run_depend>map_server</run_depend>
 </package>
