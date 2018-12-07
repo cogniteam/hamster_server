@@ -79,6 +79,7 @@ private slots:
 
 	void onFocusMessage(std_msgs::StringConstPtr);
 	void selected(const std::string&);
+	void mappingModeButtonIsClicked(void);
 
 public slots:
 
@@ -134,6 +135,7 @@ private:
 
 	ros::Subscriber focus_subscriber_;
 	ros::Publisher focus_publisher_;
+	ros::Publisher mappingCommadPub_;
 
 	std::map<std::string, RobotGraphicsItem*> robots_;
 
@@ -147,6 +149,8 @@ private:
 
 	double map_size_;
 	Mode mode_;
+
+	int mappingMode_;
 
 
 	boost::thread tf_listener_thread_;

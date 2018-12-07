@@ -430,9 +430,57 @@
        <bool>false</bool>
       </property>
      </widget>
+     <widget class="QPushButton" name="goalDetectionModeButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>125</y>
+        <width>24</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::PreventContextMenu</enum>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Goal Detection Mode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: transparent;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../resources/mrm_robot_resources.qrc">
+        <normaloff>:/images/auto.png</normaloff>:/images/auto.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+     </widget>
      <zorder>layoutWidget</zorder>
      <zorder>imageLabel</zorder>
      <zorder>operationModeButton</zorder>
+     <zorder>goalDetectionModeButton</zorder>
     </widget>
    </item>
   </layout>

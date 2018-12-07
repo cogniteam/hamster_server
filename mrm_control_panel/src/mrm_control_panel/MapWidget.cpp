@@ -24,11 +24,16 @@ MapWidget::MapWidget(ros::NodeHandle& node_handle, QWidget* parent)
 	, node_handle_(node_handle)
 	, map_size_(0)
 	, mode_(Normal)
-	, active_view_on_robot_("") {
+	, active_view_on_robot_("")
+	, mappingMode_(0)
+	{
 
 	setupUi(this);
 
 	connectSignals();
+
+	ros::NodeHandle nh;
+	mappingCommadPub_ = nh.advertise<std_msgs::String>("mapping_command", 1);
 }
 
 MapWidget::~MapWidget() {
@@ -59,12 +64,27 @@ void MapWidget::connectSignals() {
 
 	// connect(this, SIGNAL(removeGoalFlagSignal(const std::string&)),
 	// 			this, SLOT(removeGoalFlagSlot(const std::string&)));
+
+	connect(mappingModeButton, SIGNAL(clicked()), this, SLOT(mappingModeButtonIsClicked()));
 }
 
 void MapWidget::shutdown() {
 	map_subscriber_.shutdown();
 	focus_subscriber_.shutdown();
 	focus_publisher_.shutdown();
+}
+
+void MapWidget::mappingModeButtonIsClicked(){
+	if (mappingMode_ != 0)
+		mappingMode_ = 0;
+	else
+		mappingMode_ = 1;
+	
+	std_msgs::String msg;
+
+	msg.data = (mappingMode_ == 0) ? "localization" : "mapping";
+	mappingCommadPub_.publish(msg);
+	(mappingMode_ == 0) ? mappingModeButton->setText("Mapping") : mappingModeButton->setText("Localization");
 }
 
 void MapWidget::start() {

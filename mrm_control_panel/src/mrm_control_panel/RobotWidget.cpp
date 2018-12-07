@@ -43,6 +43,8 @@ RobotWidget::RobotWidget(QString id, ros::NodeHandle& node_handle, QWidget* pare
 {
 	setupUi(this);
 	idLabel->setText(id);
+	
+	goalDetectionPublisher_ = node_handle_.advertise<std_msgs::String>(id.toStdString() + "/detection_state", 1, false);
 
 	connect(this, SIGNAL(cameraImageChangedSignal(QImage)),
 			this, SLOT(cameraImageChanged(QImage)));
@@ -57,12 +59,17 @@ RobotWidget::RobotWidget(QString id, ros::NodeHandle& node_handle, QWidget* pare
 			this, SLOT(selectedRobotChanged(std_msgs::StringConstPtr)));
 
 
-
 	connect(operationModeButton, SIGNAL(clicked()), this, SLOT(modeButtonClicked()));
+
+	connect(goalDetectionModeButton, SIGNAL(clicked()), this, SLOT(goalDetectionButtonClicked()));
 
 	connect(this, SIGNAL(updateOperationIconSignal(int)), this, SLOT(updateOperationIcon(int)));
 
+	connect(this, SIGNAL(updateGoalDetectionIconSignal(int)), this, SLOT(updateGoalDetectionIcon(int)));
+
 	operation_publisher_ = node_handle_.advertise<std_msgs::String>("/decision_making/" + id.toStdString() + "/events", 10, true);
+
+	
 
 	updateFrameStyle();
 
@@ -92,6 +99,21 @@ void RobotWidget::updateOperationIcon(int mode)
 	}
 }
 
+void RobotWidget::updateGoalDetectionIcon(int mode){
+	QIcon icon;
+
+	if (mode > 0)
+	{
+		icon.addFile(QString::fromUtf8(":/images/auto.png"), QSize(), QIcon::Normal, QIcon::Off);
+		goalDetectionModeButton->setIcon(icon);
+	}
+	else
+	{
+		icon.addFile(QString::fromUtf8(":/images/manual.png"), QSize(), QIcon::Normal, QIcon::Off);
+		goalDetectionModeButton->setIcon(icon);
+	}
+}
+
 void RobotWidget::modeButtonClicked()
 {
 
@@ -107,6 +129,21 @@ void RobotWidget::modeButtonClicked()
 	emit updateOperationIconSignal(current_mode_);
 
 	setOperationMode(current_mode_);
+}
+
+void RobotWidget::goalDetectionButtonClicked(){
+	if (current_mode_ > 0)
+	{
+		current_mode_ = 0;
+	}
+	else
+	{
+		current_mode_ = 1;
+	}
+
+	emit updateGoalDetectionIconSignal(current_mode_);
+
+	setGoalDetectionMode(current_mode_);
 }
 
 void RobotWidget::setOperationMode(int mode)
@@ -129,7 +166,20 @@ void RobotWidget::setOperationMode(int mode)
 	operation_publisher_.publish(message);
 }
 
-void RobotWidget::subscribeToCamera(const std::string& topic) {
+void RobotWidget::setGoalDetectionMode(int mode){
+	std_msgs::String msg;
+
+	if (mode == 0)
+		msg.data = "stop";
+	else
+		msg.data = "start";
+
+	goalDetectionPublisher_.publish(msg);
+}
+
+	void
+	RobotWidget::subscribeToCamera(const std::string &topic)
+{
 	boost::function<void(const sensor_msgs::ImageConstPtr)> imageCallBack
 				= boost::bind(&RobotWidget::onCameraImageMessage, this, _1);
 	image_transport::ImageTransport image_transport_(node_handle_);

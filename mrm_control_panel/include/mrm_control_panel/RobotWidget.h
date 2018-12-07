@@ -71,8 +71,10 @@ public:
 private Q_SLOTS:
 
 	void modeButtonClicked(void);
+	void goalDetectionButtonClicked(void);
 
 	void updateOperationIcon(int);
+	void updateGoalDetectionIcon(int);
 
 	void cameraImageChanged(QImage);
 
@@ -88,8 +90,9 @@ Q_SIGNALS:
 	void selectedRobotChangedSignal(std_msgs::StringConstPtr);
 
 	void updateOperationIconSignal(int);
+	void updateGoalDetectionIconSignal(int);
 
-private:
+  private:
     const static QString FRAME_STYLE_NORMAL;
     const static QString FRAME_STYLE_SELECTED;
 
@@ -109,6 +112,7 @@ private:
     void mousePressEvent(QMouseEvent* event);
     
     void setOperationMode(int mode);
+	void setGoalDetectionMode(int mode);
 
     bool setInt(QLabel*, double);
     bool isPositive(double) const;
@@ -131,6 +135,8 @@ private:
 
 
 	ros::Publisher operation_publisher_;
+
+	ros::Publisher goalDetectionPublisher_;
 
 	bool selected_;
 
