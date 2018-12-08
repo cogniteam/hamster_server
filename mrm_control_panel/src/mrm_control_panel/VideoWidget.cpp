@@ -42,13 +42,21 @@ VideoWidget::VideoWidget(ros::NodeHandle& node_handle)
 
 	connect(this, SIGNAL(wifiSignalValueChangedSignal(double)),
 			this, SLOT(wifiSignalValueChanged(double)));
+
+	ros::NodeHandle nh;
+	distanceSub_ = nh.subscribe("/" + robotId_ + "/distance_to_object", 1,
+		&VideoWidget::distanceToObjectCallback, this);
+
+
 }
 
 VideoWidget::~VideoWidget() {
 
 }
 
-
+void VideoWidget::distanceToObjectCallback(const std_msgs::Float32ConstPtr& msg){
+	_mrm_video_widget.distanceToObject->display(msg->data);
+}
 
 void VideoWidget::onVelocityMessage(const geometry_msgs::Twist::Ptr velocityMessage) 
 {
@@ -175,6 +183,8 @@ void VideoWidget::subscribeToCameraImage(ros::NodeHandle& node_handle, const std
 	topic.append("/");
 	topic.append(robot);
 	topic.append("/image");
+
+	robotId_ = robot;
 
 	// image_subscriber_.shutdown();
 	boost::function<void(const sensor_msgs::ImageConstPtr)> imageCallBack

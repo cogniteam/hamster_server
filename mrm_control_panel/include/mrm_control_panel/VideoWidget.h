@@ -18,6 +18,7 @@
 #include <std_msgs/String.h>
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/Image.h>
+#include <std_msgs/Float32.h>
 
 #include <ui_mrm_video_widget.h>
 
@@ -79,6 +80,8 @@ private:
 	bool setInt(QLabel* label, double value);
 	void onVelocityMessage(const geometry_msgs::Twist::Ptr velocityMessage);
 
+	void distanceToObjectCallback (const std_msgs::Float32ConstPtr& msg);
+
 
 	ros::NodeHandle node_handle_;
 	Ui_MrmVideoWidget _mrm_video_widget;
@@ -90,10 +93,14 @@ private:
 	ros::Subscriber _cameraSourceSubscriber;
 	image_transport::Subscriber image_subscriber_;
 
+	ros::Subscriber distanceSub_;
+
 	std::string current_source_;
 
 	double linear_velocity_;
 	double angular_velocity_;
+
+	std::string robotId_;
 };
 
 } /* namespace mrm_control_panel */
