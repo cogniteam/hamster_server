@@ -53,17 +53,17 @@ void MapWidget::connectSignals() {
 	connect(this, SIGNAL(tfChangedSignal(const std::string&, const QPointF&, double)),
 			this, SLOT(tfChanged(const std::string&, const QPointF&, double)));
 
-	// connect(this, SIGNAL(objectFoundSignal(mrm_msgs::ObjectFoundConstPtr)),
-	// 		this, SLOT(objectFound(mrm_msgs::ObjectFoundConstPtr)));
+	connect(this, SIGNAL(objectFoundSignal(mrm_msgs::ObjectFoundConstPtr)),
+			this, SLOT(objectFound(mrm_msgs::ObjectFoundConstPtr)));
 
-	// connect(this, SIGNAL(objectApproveSignal(mrm_msgs::ObjectApprovalConstPtr)),
-	// 		this, SLOT(objectApprove(mrm_msgs::ObjectApprovalConstPtr)));
+	connect(this, SIGNAL(objectApproveSignal(mrm_msgs::ObjectApprovalConstPtr)),
+			this, SLOT(objectApprove(mrm_msgs::ObjectApprovalConstPtr)));
 
-	// connect(this, SIGNAL(setGoalSignal(int, QPointF&)),
-	// 			this, SLOT(setGoalSlot(int, QPointF&)));
+	connect(this, SIGNAL(setGoalSignal(int, QPointF&)),
+				this, SLOT(setGoalSlot(int, QPointF&)));
 
-	// connect(this, SIGNAL(removeGoalFlagSignal(const std::string&)),
-	// 			this, SLOT(removeGoalFlagSlot(const std::string&)));
+	connect(this, SIGNAL(removeGoalFlagSignal(const std::string&)),
+				this, SLOT(removeGoalFlagSlot(const std::string&)));
 
 	connect(mappingModeButton, SIGNAL(clicked()), this, SLOT(mappingModeButtonIsClicked()));
 }
@@ -82,7 +82,7 @@ void MapWidget::mappingModeButtonIsClicked(){
 	
 	std_msgs::String msg;
 
-	msg.data = (mappingMode_ == 0) ? "localization" : "mapping";
+	msg.data = (mappingMode_ == 0) ? "localization" : "slam";
 	mappingCommadPub_.publish(msg);
 	(mappingMode_ == 0) ? mappingModeButton->setText("Mapping") : mappingModeButton->setText("Localization");
 }

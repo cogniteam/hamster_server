@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/daria/Workspaces/navex320_ws/devel/include",
+                "/opt/ros/kinetic/include",
+                "/home/daria/Workspaces/hamster_server_ws/src/hamster_server/mrm_control_panel/include",
+                "/usr/include"
+            ],
+            "name": "Linux",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
