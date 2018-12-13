@@ -38,4 +38,4 @@ void ControlPlugin::restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
 
 } /* namespace mrm_control_panel */
 
-PLUGINLIB_DECLARE_CLASS(mrm_control_panel, ControlPlugin, mrm_control_panel::ControlPlugin, rqt_gui_cpp::Plugin)
+PLUGINLIB_EXPORT_CLASS(mrm_control_panel::ControlPlugin, rqt_gui_cpp::Plugin)

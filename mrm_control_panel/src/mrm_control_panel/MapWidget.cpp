@@ -307,7 +307,7 @@ RobotGraphicsItem* MapWidget::registrateRobot(const std::string& robot_id,
 	connect(robot, SIGNAL(selected(const std::string&)),
 			this, SLOT(selected(const std::string&)));
 
-	robot_pair_t entry = std::make_pair<std::string, RobotGraphicsItem*>(robot_id, robot);
+	robot_pair_t entry = std::make_pair(robot_id, robot);
 
 	if (!robots_.insert(entry).second) {
 		return NULL;

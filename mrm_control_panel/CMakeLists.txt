@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(mrm_control_panel)
 
+add_compile_options(-std=c++14)
+
 MACRO (QT4_WRAP_UI2 outfiles )
   QT5_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
 
