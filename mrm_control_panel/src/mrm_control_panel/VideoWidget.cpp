@@ -43,9 +43,8 @@ VideoWidget::VideoWidget(ros::NodeHandle& node_handle)
 	connect(this, SIGNAL(wifiSignalValueChangedSignal(double)),
 			this, SLOT(wifiSignalValueChanged(double)));
 
-	ros::NodeHandle nh;
-	distanceSub_ = nh.subscribe("/" + robotId_ + "/distance_to_object", 1,
-		&VideoWidget::distanceToObjectCallback, this);
+
+
 
 
 }
@@ -184,7 +183,7 @@ void VideoWidget::subscribeToCameraImage(ros::NodeHandle& node_handle, const std
 	topic.append(robot);
 	topic.append("/image");
 
-	robotId_ = robot;
+	// robotId_ = robot;
 
 	// image_subscriber_.shutdown();
 	boost::function<void(const sensor_msgs::ImageConstPtr)> imageCallBack
@@ -193,6 +192,7 @@ void VideoWidget::subscribeToCameraImage(ros::NodeHandle& node_handle, const std
 
 	image_subscriber_ = image_transport_.subscribe(topic, 1, imageCallBack, ros::VoidPtr(),
 												   image_transport::TransportHints("compressed", ros::TransportHints().unreliable()));
+
 }
 
 void VideoWidget::onCameraImageMessage(const sensor_msgs::ImageConstPtr message) {
@@ -230,6 +230,12 @@ void VideoWidget::onSelectedRobotChangedMessage(std_msgs::StringConstPtr message
 void VideoWidget::cameraSourceChanged(std_msgs::StringConstPtr message) {
 	ros::NodeHandle node;
 	subscribeToCameraImage(node , message->data);
+	robotId_ = message->data;
+	ROS_INFO("robotId_: %s", robotId_.c_str());
+	ros::NodeHandle nh;
+	distanceSub_ = nh.subscribe("/" + robotId_ + "/distance_to_object", 1,
+		&VideoWidget::distanceToObjectCallback, this);
+
 }
 
 void VideoWidget::cameraImageChanged(QImage image) {
