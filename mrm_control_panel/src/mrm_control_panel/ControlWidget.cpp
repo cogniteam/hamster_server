@@ -100,7 +100,36 @@ void ControlWidget::keyPressEvent(QKeyEvent *event)
         case Qt::Key_9:  
 				message.data = "agent9";				
             break;
-
+				case Qt::Key_Exclam:
+				message.data = "agent11";
+            break;
+				case Qt::Key_At:
+				message.data = "agent12";
+            break;
+				case Qt::Key_NumberSign:
+				message.data = "agent13";
+            break;
+				case Qt::Key_Dollar:
+				message.data = "agent14";
+            break;
+				case Qt::Key_Percent:
+				message.data = "agent15";
+            break;
+				case Qt::Key_AsciiCircum:
+				message.data = "agent16";
+            break;
+				case Qt::Key_Ampersand:
+				message.data = "agent17";
+            break;
+				case Qt::Key_Asterisk:
+				message.data = "agent18";
+            break;
+				case Qt::Key_ParenLeft:
+				message.data = "agent19";
+            break;
+				case Qt::Key_ParenRight:
+				message.data = "agent20";
+            break;
 
         case Qt::Key_Space:
 				if (map_widget_->getSelectedRobotId() != "")
