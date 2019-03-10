@@ -344,95 +344,33 @@ void MapWidget::tfListenerProcess()
 
 	while (ros::ok() && !tf_listener_thread_.interruption_requested()) 
 	{
-		if (getRobotPosition("/agent1/base_link", position, heading)) {
+#define EMIT_TF_CHANGED_SIGNAL(ROBOT_TF_TOPIC, AGENT_NUMBER) \
+	if (getRobotPosition(ROBOT_TF_TOPIC, position, heading)) { \
+		drawShadow(position, heading); \
+		shadow_changed = true; \
+		emit tfChangedSignal(AGENT_NUMBER, position, heading); \
+	}
 
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent1", position, heading);
-		}
-
-		if (getRobotPosition("/agent2/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent2", position, heading);
-		}
-
-		if (getRobotPosition("/agent3/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent3", position, heading);
-		}
-
-		if (getRobotPosition("/agent4/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent4", position, heading);
-		}
-
-		if (getRobotPosition("/agent5/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent5", position, heading);
-		}
-
-		if (getRobotPosition("/agent6/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent6", position, heading);
-		}
-
-		if (getRobotPosition("/agent7/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent7", position, heading);
-		}
-
-		if (getRobotPosition("/agent8/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent8", position, heading);
-		}
-
-		if (getRobotPosition("/agent9/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent9", position, heading);
-		}
-
-		if (getRobotPosition("/agent10/base_link", position, heading)) {
-
-			drawShadow(position,heading);
-
-			shadow_changed = true;
-
-			emit tfChangedSignal("agent10", position, heading);
-		}
+		EMIT_TF_CHANGED_SIGNAL("/agent1/base_link", "agent1");
+		EMIT_TF_CHANGED_SIGNAL("/agent2/base_link", "agent2");
+		EMIT_TF_CHANGED_SIGNAL("/agent3/base_link", "agent3");
+		EMIT_TF_CHANGED_SIGNAL("/agent4/base_link", "agent4");
+		EMIT_TF_CHANGED_SIGNAL("/agent5/base_link", "agent5");
+		EMIT_TF_CHANGED_SIGNAL("/agent6/base_link", "agent6");
+		EMIT_TF_CHANGED_SIGNAL("/agent7/base_link", "agent7");
+		EMIT_TF_CHANGED_SIGNAL("/agent8/base_link", "agent8");
+		EMIT_TF_CHANGED_SIGNAL("/agent9/base_link", "agent9");
+		EMIT_TF_CHANGED_SIGNAL("/agent10/base_link", "agent10");
+		EMIT_TF_CHANGED_SIGNAL("/agent11/base_link", "agent11");
+		EMIT_TF_CHANGED_SIGNAL("/agent12/base_link", "agent12");
+		EMIT_TF_CHANGED_SIGNAL("/agent13/base_link", "agent13");
+		EMIT_TF_CHANGED_SIGNAL("/agent14/base_link", "agent14");
+		EMIT_TF_CHANGED_SIGNAL("/agent15/base_link", "agent15");
+		EMIT_TF_CHANGED_SIGNAL("/agent16/base_link", "agent16");
+		EMIT_TF_CHANGED_SIGNAL("/agent17/base_link", "agent17");
+		EMIT_TF_CHANGED_SIGNAL("/agent18/base_link", "agent18");
+		EMIT_TF_CHANGED_SIGNAL("/agent19/base_link", "agent19");
+		EMIT_TF_CHANGED_SIGNAL("/agent20/base_link", "agent20");
 
 		if (true == shadow_changed)
 		{

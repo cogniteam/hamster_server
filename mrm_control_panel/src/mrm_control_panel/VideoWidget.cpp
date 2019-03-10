@@ -181,7 +181,7 @@ void VideoWidget::subscribeToCameraImage(ros::NodeHandle& node_handle, const std
 			= boost::bind(&VideoWidget::onCameraImageMessage, this, _1);
 	image_transport::ImageTransport image_transport_(node_handle);
 
-	image_subscriber_ = image_transport_.subscribe(topic, 1, imageCallBack, ros::VoidPtr(),
+	image_subscriber_ = image_transport_.subscribe(topic, 10, imageCallBack, ros::VoidPtr(),
 												   image_transport::TransportHints("compressed", ros::TransportHints().unreliable()));
 }
 
