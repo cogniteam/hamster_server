@@ -309,7 +309,7 @@ void ControlWidget::setOperationMode(int mode)
 
 void ControlWidget::subscribeToRobotsMove(ros::NodeHandle* node_handle) 
 {	
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 20; ++i)
 	{
 		QString robot_id = QString("agent");
 		robot_id.append(QString::number(i + 1));
@@ -329,6 +329,7 @@ void ControlWidget::subscribeToRobotsMove(ros::NodeHandle* node_handle)
 }
 
 void ControlWidget::addRobotWidgets() {
+	ROS_INFO("On robot widget");
 	ros::NodeHandle node_handle;
 	boost::shared_ptr<RobotWidget> robot;
 

@@ -42,7 +42,8 @@ VideoWidget::VideoWidget(ros::NodeHandle& node_handle)
 
 	connect(this, SIGNAL(wifiSignalValueChangedSignal(double)),
 			this, SLOT(wifiSignalValueChanged(double)));
-}
+
+	}
 
 VideoWidget::~VideoWidget() {
 
@@ -50,20 +51,22 @@ VideoWidget::~VideoWidget() {
 
 
 
-void VideoWidget::onVelocityMessage(const geometry_msgs::Twist::Ptr velocityMessage) 
+void VideoWidget::velocityCallback(const ackermann_msgs::AckermannDriveStamped::Ptr& msg) 
 {
-	double linear = velocityMessage->linear.x;
-	double angular = velocityMessage->angular.z;
-
+	double linear = msg->drive.speed;
+	double angular = msg->drive.steering_angle_velocity;
+	
 	linear_velocity_ = roundf(linear * 100) / 100;
 	angular_velocity_ = roundf(angular * 100) / 100;
 
 	emit redrawSignal();
+	
 }
 
 void VideoWidget::redraw() {
 	_mrm_video_widget.videoLcdLinearVelocity->display(linear_velocity_);
 	_mrm_video_widget.videoLcdAngularVelocity->display(angular_velocity_);
+	
 }
 
 void VideoWidget::batteryValueChanged(double value) 
@@ -183,6 +186,7 @@ void VideoWidget::subscribeToCameraImage(ros::NodeHandle& node_handle, const std
 
 	image_subscriber_ = image_transport_.subscribe(topic, 10, imageCallBack, ros::VoidPtr(),
 												   image_transport::TransportHints("compressed", ros::TransportHints().unreliable()));
+	// redraw();
 }
 
 void VideoWidget::onCameraImageMessage(const sensor_msgs::ImageConstPtr message) {
@@ -209,17 +213,46 @@ void VideoWidget::onSelectedRobotChangedMessage(std_msgs::StringConstPtr message
 		QString title = QString::fromStdString(current_source_);
 		_mrm_video_widget.current_robot_text->setText(title);
 
-		std::stringstream stream;
+		// std::stringstream stream;
 
-		stream << "/"<< current_source_ << "/cmd_vel";
+		// stream << "/"<< current_source_ << "/cmd_vel";
 
-		velocity_subscriber_ = node_handle_.subscribe(stream.str(), 1,&VideoWidget::onVelocityMessage, this);
+		// velocity_subscriber_ = node_handle_.subscribe(stream.str(), 1,&VideoWidget::onVelocityMessage, this);
 	}
 }
 
 void VideoWidget::cameraSourceChanged(std_msgs::StringConstPtr message) {
 	ros::NodeHandle node;
 	subscribeToCameraImage(node , message->data);
+	std::string batteryTopic;
+	batteryTopic.append("/");
+	batteryTopic.append(message->data);
+	batteryTopic.append("/battery");
+
+	std::string wifiTopic;
+	wifiTopic.append("/");
+	wifiTopic.append(message->data);
+	wifiTopic.append("/rssi");
+
+	std::string velocityTopic;
+	velocityTopic.append("/");
+	velocityTopic.append(message->data);
+	velocityTopic.append("/ackermann_cmd");
+
+
+	batterySubscriber_ = node.subscribe(batteryTopic, 1, &VideoWidget::batteryCallback, this);
+	wifiSignalSubscriber_ = node.subscribe(wifiTopic, 1, &VideoWidget::wifiCallback, this);
+	velocitySubscriber_ = node.subscribe(velocityTopic, 1, &VideoWidget::velocityCallback, this);
+
+	// redraw();
+}
+
+void VideoWidget::batteryCallback(const std_msgs::Float32& msg){
+	emit batteryValueChangedSignal(msg.data);
+}
+
+void VideoWidget::wifiCallback(const std_msgs::Float32& msg){
+	emit wifiSignalValueChangedSignal(msg.data);
 }
 
 void VideoWidget::cameraImageChanged(QImage image) {
