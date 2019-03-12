@@ -19,6 +19,7 @@
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/Image.h>
 #include <std_msgs/Float32.h>
+#include <ackermann_msgs/AckermannDriveStamped.h>
 
 #include <ui_mrm_video_widget.h>
 
@@ -80,6 +81,10 @@ private:
 	bool setInt(QLabel* label, double value);
 	void onVelocityMessage(const geometry_msgs::Twist::Ptr velocityMessage);
 
+	void batteryCallback (const std_msgs::Float32& msg);
+	void wifiCallback (const std_msgs::Float32& msg);
+	void velocityCallback (const ackermann_msgs::AckermannDriveStamped::Ptr& msg);
+
 	void distanceToObjectCallback (const std_msgs::Float32ConstPtr& msg);
 
 
@@ -89,6 +94,10 @@ private:
 
 	ros::Subscriber velocity_subscriber_;
 	ros::Subscriber cur_view_robot_subscriber_;
+
+	ros::Subscriber batterySubscriber_;
+	ros::Subscriber wifiSignalSubscriber_;
+	ros::Subscriber velocitySubscriber_;
 
 	ros::Subscriber _cameraSourceSubscriber;
 	image_transport::Subscriber image_subscriber_;
